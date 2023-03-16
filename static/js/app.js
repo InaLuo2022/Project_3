@@ -18,7 +18,8 @@ d3.json(url).then(function(data){
 
     let total_emission_2020 = parseInt('0')
     for (let i = 0; i< data.length; i++) {
-      total_emission_2020 = parseInt(data[i].Year_2020)
+      total_emission_2020 = parseInt(total_emission_2020 + data[i].Year_2020)
+      console.log(parseInt(total_emission_2020))
     }
 
     let restworld_emission = parseInt(total_emission_2020) - parseInt(data[0].Year_2020);
@@ -65,7 +66,6 @@ function dropdown_value (items) {
     let options = "";
     for (let i = 0; i < items.length; i++) {
         options += "<option>" + items[i].country + "</option>";
-        console.log(items[i]);
         document.getElementById("selDataset").innerHTML = options
     };
 };
@@ -73,13 +73,40 @@ function dropdown_value (items) {
 d3.selectAll("#selDataset").on("change", getData);
 
 function getData() {
-    let dropdownMenu = d3.selectAll("#selDataset");
-    let items = dropdownMenu.property("value");
+  let dropdownMenu = d3.selectAll("#selDataset");
+  let item = dropdownMenu.property("value");
 
-    emission_trend(xValue2, yValue2, items);
-    emission_percentage (values2, country2);
-};
+  let index = [];
 
+  d3.json(url).then(function(data){
+
+    for (let j = 0; j < data.length; j++) {
+      if (data[j].country == item) {
+        index = j;
+        console.log(index)
+      }
+  }
+  // chart init
+  let yValue = [data[index].Year_2000,data[index].Year_2001,data[index].Year_2002,data[index].Year_2003,data[index].Year_2004,
+          data[index].Year_2005,data[index].Year_2006,data[index].Year_2007,data[index].Year_2008,data[index].Year_2009,
+          data[index].Year_2010,data[index].Year_2011,data[index].Year_2012,data[index].Year_2013,data[index].Year_2014,
+          data[index].Year_2015,data[index].Year_2016,data[index].Year_2017,data[index].Year_2018,data[index].Year_2019,data[index].Year_2020];
+
+    let country = data[index].country;
+
+    let total_emission_2020 = parseInt('0')
+    for (let i = 0; i< data.length; i++) {
+      total_emission_2020 = parseInt(total_emission_2020 + data[i].Year_2020)
+      console.log(parseInt(total_emission_2020))
+    }
+
+    let restworld_emission = parseInt(total_emission_2020) - parseInt(data[index].Year_2020);
+    let values = [data[0].Year_2020, restworld_emission];
+
+    emission_trend(xValue, yValue, country);
+    emission_percentage (values, country)
+  });
+}
 // Donut Chart
 let CO2_data = [16, 15, 12, 6, 5, 4, 42];
 let CH4_data = [27, 11, 25, 8, 1, 3, 25];
@@ -137,4 +164,4 @@ var data = [{
   Plotly.newPlot('Donuts', data, layout);
 };
 
-GH_Contributor(CH4_data, CO2_data, elements)
+//GH_Contributor(CH4_data, CO2_data, elements)
