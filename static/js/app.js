@@ -16,19 +16,19 @@ d3.json(url).then(function(data){
 
     let country = data[0].country;
 
-    let total_emission_2020 = parseInt('0')
+    let total_emission_2020 = 0
     for (let i = 0; i< data.length; i++) {
       total_emission_2020 = parseInt(total_emission_2020 + data[i].Year_2020)
-      console.log(parseInt(total_emission_2020))
+      console.log(total_emission_2020)
     }
 
-    let restworld_emission = parseInt(total_emission_2020) - parseInt(data[0].Year_2020);
+    let restworld_emission = total_emission_2020 - parseInt(data[0].Year_2020);
     let values = [data[0].Year_2020, restworld_emission];
 
     emission_trend(xValue, yValue, country);
     emission_percentage (values, country)
-
     dropdown_value (data);
+    top_5_2020(data,donut_chart)
 });
 
 // line chart function
@@ -40,7 +40,7 @@ function emission_trend (xValue, yValue, country) {
         name: country + 'Total Emission Trend kilotonnes' 
     };
     var layout = {
-        title: country + ' Total Emission Trend (Unit: kilotonnes)'
+        title: country + ' Total Emission Trend<br>(Unit: kilotonnes)'
     }
     var data = [trace1];
     Plotly.newPlot('line', data, layout);
@@ -55,7 +55,8 @@ function emission_percentage (values, country) {
     }];
     var layout = {
         height: 400,
-        width: 500
+        width: 500,
+        title: country + ' Emission % in 2020'
     };
   
     Plotly.newPlot('pie', data, layout);
@@ -63,11 +64,11 @@ function emission_percentage (values, country) {
 
 // set dropdown box value
 function dropdown_value (items) {
-    let options = "";
-    for (let i = 0; i < items.length; i++) {
-        options += "<option>" + items[i].country + "</option>";
-        document.getElementById("selDataset").innerHTML = options
-    };
+  let options = "";
+  for (let i = 0; i < items.length; i++) {
+      options += "<option>" + items[i].country + "</option>";
+      document.getElementById("selDataset").innerHTML = options
+  };
 };
 
 d3.selectAll("#selDataset").on("change", getData);
@@ -86,7 +87,7 @@ function getData() {
         console.log(index)
       }
   }
-  // chart init
+  // chart for dropdown box
   let yValue = [data[index].Year_2000,data[index].Year_2001,data[index].Year_2002,data[index].Year_2003,data[index].Year_2004,
           data[index].Year_2005,data[index].Year_2006,data[index].Year_2007,data[index].Year_2008,data[index].Year_2009,
           data[index].Year_2010,data[index].Year_2011,data[index].Year_2012,data[index].Year_2013,data[index].Year_2014,
@@ -100,13 +101,189 @@ function getData() {
       console.log(parseInt(total_emission_2020))
     }
 
-    let restworld_emission = parseInt(total_emission_2020) - parseInt(data[index].Year_2020);
-    let values = [data[0].Year_2020, restworld_emission];
+    let restworld_emission = parseInt(total_emission_2020 - data[index].Year_2020);
+    let values = [data[index].Year_2020, restworld_emission];
 
     emission_trend(xValue, yValue, country);
     emission_percentage (values, country)
   });
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// set dropdown box value 2
+let options_1 = "<option>" + 'Year_2020' + "</option>" + 
+          "<option>" + 'Year_2015' + "</option>" +
+          "<option>" + 'Year_2010' + "</option>" +
+          "<option>" + 'Year_2005' + "</option>" +
+          "<option>" + 'Year_2000' + "</option>"
+
+document.getElementById("selDataset_1").innerHTML = options_1
+
+// function: top 5 contributors
+function top_5_2020(data, donut_chart){
+  let data_year = [];
+  for (let x = 0; x < data.length; x++) {
+    data_year.push(parseInt(data[x].Year_2020));
+  }
+  var topValues = data_year.sort((a,b) => b-a).slice(0,5)
+
+  let top_5_countries = []
+  for (let y = 0; y < 5; y ++) {
+    for (let z = 0; z < data.length; z++) {
+      if (parseInt(topValues[y]) == parseInt(data[z].Year_2020)) {
+        top_5_countries.push (data[z].country)
+      }
+    }
+  }
+  var donut_chart = donut_chart (topValues, top_5_countries);
+  //return console.log(topValues, top_5_countries) 
+  return donut_chart
+}
+
+function top_5_2015(data, donut_chart){
+  let data_year = [];
+  for (let x = 0; x < data.length; x++) {
+    data_year.push(parseInt(data[x].Year_2015));
+  }
+  var topValues = data_year.sort((a,b) => b-a).slice(0,5)
+
+  let top_5_countries = []
+  for (let y = 0; y < 5; y ++) {
+    for (let z = 0; z < data.length; z++) {
+      if (parseInt(topValues[y]) == parseInt(data[z].Year_2015)) {
+        top_5_countries.push (data[z].country)
+      }
+    }
+  }
+  var donut_chart = donut_chart (topValues, top_5_countries) 
+  return donut_chart
+}
+
+function top_5_2010(data, donut_chart){
+  let data_year = [];
+  for (let x = 0; x < data.length; x++) {
+    data_year.push(parseInt(data[x].Year_2010));
+  }
+  var topValues = data_year.sort((a,b) => b-a).slice(0,5)
+
+  let top_5_countries = []
+  for (let y = 0; y < 5; y ++) {
+    for (let z = 0; z < data.length; z++) {
+      if (parseInt(topValues[y]) == parseInt(data[z].Year_2010)) {
+        top_5_countries.push (data[z].country)
+      }
+    }
+  }
+  var donut_chart = donut_chart (topValues, top_5_countries) 
+  return donut_chart
+}
+
+function top_5_2005(data, donut_chart){
+  let data_year = [];
+  for (let x = 0; x < data.length; x++) {
+    data_year.push(parseInt(data[x].Year_2005));
+  }
+  var topValues = data_year.sort((a,b) => b-a).slice(0,5)
+
+  let top_5_countries = []
+  for (let y = 0; y < 5; y ++) {
+    for (let z = 0; z < data.length; z++) {
+      if (parseInt(topValues[y]) == parseInt(data[z].Year_2005)) {
+        top_5_countries.push (data[z].country)
+      }
+    }
+  }
+  var donut_chart = donut_chart (topValues, top_5_countries) 
+  return donut_chart
+}
+
+function top_5_2000(data, donut_chart){
+  let data_year = [];
+  for (let x = 0; x < data.length; x++) {
+    data_year.push(parseInt(data[x].Year_2000));
+  }
+  var topValues = data_year.sort((a,b) => b-a).slice(0,5)
+
+  let top_5_countries = []
+  for (let y = 0; y < 5; y ++) {
+    for (let z = 0; z < data.length; z++) {
+      if (parseInt(topValues[y]) == parseInt(data[z].Year_2000)) {
+        top_5_countries.push (data[z].country)
+      }
+    }
+  }
+  var donut_chart = donut_chart (topValues, top_5_countries) 
+  return donut_chart
+}
+
+d3.selectAll("#selDataset_1").on("change", getData_1);
+
+function getData_1() {
+  let dropdownMenu = d3.selectAll("#selDataset_1");
+  let item = dropdownMenu.property("value");
+  console.log(item)
+
+  d3.json(url).then(function(data){
+    if (item == "Year_2020") {
+      top_5_2020(data, donut_chart)
+    }
+    else if (item == "Year_2015") {
+      top_5_2015(data, donut_chart)
+    }
+    else if (item == "Year_2010") {
+      top_5_2010(data, donut_chart)
+    }
+    else if (item == "Year_2005") {
+      top_5_2005(data, donut_chart)
+    }
+    else if (item == "Year_2000") {
+      top_5_2000(data, donut_chart)
+    }
+  });
+
+}
+// function: chart.js donut chart
+function donut_chart (data, labels) {
+  var ctx = document.getElementById('donut_chart').getContext('2d');
+  const existingChart = Chart.getChart(ctx);
+
+  if (existingChart) {
+    // If a Chart object already exists, destroy it
+    existingChart.destroy();
+  }
+
+  new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: labels,
+        datasets: [{
+            data: data,
+            backgroundColor: [ 
+                'rgba(14, 127, 0, .5)',
+                'rgba(110, 154, 22, .5)',
+                'rgba(170, 202, 42, .5)',
+                'rgba(202, 209, 95, .5)',
+                'rgba(210, 206, 145, .5)',
+                'rgba(170, 202, 42, .5)',
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        cutoutPercentage: 70,
+        responsive: false,
+        legend: {
+            position: 'bottom',
+            labels: {
+                fontColor: 'black',
+                fontSize: 14
+            }
+        }
+    }
+  });
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Donut Chart
 let CO2_data = [16, 15, 12, 6, 5, 4, 42];
 let CH4_data = [27, 11, 25, 8, 1, 3, 25];
